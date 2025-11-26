@@ -29,6 +29,8 @@ def initialize_gemini_client(
         if api_key:
             loaded_api_key = api_key
             logging.info("Using Gemini API key provided directly.")
+        elif os.environ.get('google_api_key'):
+            loaded_api_key = os.environ.get('google_api_key')
         else:
             try:
                 with open(api_key_file, "r") as f:
