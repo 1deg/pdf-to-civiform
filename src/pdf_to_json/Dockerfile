@@ -26,7 +26,7 @@ WORKDIR ${WORK_DIR}
 COPY python_dependencies.txt ${APP_DIR}/
 
 # Install dependencies
-RUN pip install --no-cache-dir -r ${APP_DIR}/python_dependencies.txt
+RUN pip install --progress-bar off --no-cache-dir -r ${APP_DIR}/python_dependencies.txt
 
 # Copy the application code into the app directory (relative to WORKDIR doesn't work here)
 COPY . ${APP_DIR}/
