@@ -3,6 +3,7 @@ import json
 import llm_lib as llm
 import pymupdf
 from flask import Flask, request, jsonify, render_template
+from flask_cors import cross_origin
 from werkzeug.utils import secure_filename
 import os
 import logging
@@ -164,15 +165,16 @@ def process_file(file_full, model_name, client):
             f"formated-{model_name}", output_json_dir)
 
         parsed_json = json.loads(formated_post_processed_json)
-        civiform_json = convert_to_civiform_json(parsed_json[0])
-        llm.save_response_to_file(
-            civiform_json, base_name, f"civiform-{model_name}", output_json_dir)
+        # no i think this is part we can skip
+        #civiform_json = convert_to_civiform_json(parsed_json[0])
+        #llm.save_response_to_file(
+        #    civiform_json, base_name, f"civiform-{model_name}", output_json_dir)
         logging.info(f"Done processing file: {file_full}")
 
         # Return both the intermediary and CiviForm JSON
         return {
             "intermediary_json": formated_post_processed_json,
-            "civiform_json": civiform_json
+           # "civiform_json": civiform_json
         }
     except Exception as e:
         logging.error(f"Failed to process file {file_full}: {e}")
@@ -187,6 +189,7 @@ def index():
 
 
 @app.route('/upload', methods=['POST'])
+@cross_origin()
 def upload_file():
     log_stream.seek(0)
     log_stream.truncate(0)
@@ -236,7 +239,7 @@ def upload_file():
             # Return the dictionary containing both JSON strings
             response_data = {
                 "intermediary_json": processing_result.get("intermediary_json"),
-                "civiform_json": processing_result.get("civiform_json"),
+                "civiform_json": '',#processing_result.get("civiform_json"),
             }
             return jsonify(response_data)
 
